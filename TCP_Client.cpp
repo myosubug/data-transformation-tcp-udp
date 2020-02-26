@@ -49,31 +49,42 @@ int main(int argc, char* argv[]){
 	//send and receive information
 	printf("Connection successful! Enter 'quit' to end program.\n");
 	int count;
-	char send_message[85];
-	char send_command[14];
+	string temp;
+	char send_message[950];
+	char send_command[49];
 	char combine_message[MAX_BUFFER_SIZE];
 	char receive_message[MAX_BUFFER_SIZE];
 	while (1) {
-		bzero(send_message, 85);
-		bzero(send_command, 14);
+		bzero(send_message, 950);
+		bzero(send_command, 49);
 		bzero(receive_message, MAX_BUFFER_SIZE);
 		bzero(combine_message, MAX_BUFFER_SIZE);
 
 		printf("Enter message to send: ");
 		gets(send_message);
-		printf("Enter a command/commands to operate on the message:\n1:Identity(Echo Back)\n2:Reverse\n3:To upper case\n4:To lower case\n5:Caesar\n6:Camel case\nFor example, you can also try multiple operations such as '2135'\nEnter command: ");
+		while (strlen(send_message) == 0){
+			cout << "Can't process empty string" << endl;
+			printf("Enter message to send: ");
+			gets(send_message);
+		}
+		printf("Enter a command/commands to operate on the message\n1:Identity(Echo Back)\n2:Reverse\n3:To upper case\n4:To lower case\n5:Caesar\n6:Camel case\nFor example, you can also try multiple operations such as '2135'\nEnter command: ");
 		gets(send_command);
+		while (strlen(send_command) == 0){
+			cout << "Can't process empty command" << endl;
+			printf("Enter command/commands to send: ");
+			gets(send_command);
+		}
 		strcpy(combine_message,send_message);
 		combine_message[strlen(combine_message)] = '@';
     	strcat(combine_message,send_command);
 
 
-		count = send(connect_socket, combine_message, 100, 0);
+		count = send(connect_socket, combine_message, 1000, 0);
 		if (count == -1){
 			printf("send() call failed");
 			exit(-1);
 		}
-		count = recv(connect_socket, receive_message, 100, 0);
+		count = recv(connect_socket, receive_message, 1000, 0);
 		if (count == -1){
 			printf("recv() call failed\n");
 			exit(-1);
@@ -81,12 +92,19 @@ int main(int argc, char* argv[]){
 			cout << endl << endl;
 			cout << "===============================" << endl;
 			printf("sent '%s' to server\n", send_message);
-			printf("received '%s' from server\n", receive_message);
+			printf("received from server:\n");
+			printf("%s\n", receive_message);
 			cout << "===============================" << endl << endl;
+
+			if (strlen(receive_message) == 0){
+				cout << "One of the requested UDP server is not responding!\nterminating connection... \ntry again after checking the UDP server" << endl;
+			}
 		}
+			
 		if (strstr("quit", receive_message) != NULL || strstr(send_message, "quit") != NULL){
 			break;
 		}
+	
 		
 	}
 

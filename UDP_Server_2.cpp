@@ -12,7 +12,7 @@
 #include <netinet/in.h> 
 #include <string.h>  
 
-#define MAX_BUFFER_SIZE  100
+#define MAX_BUFFER_SIZE  1000
 #define MASTER_PORT 5000
 
 using namespace std;
