@@ -13,7 +13,8 @@
 #include <string.h>
 #include <string>
 #include <strings.h>
-#include <stddef.h> 
+#include <stddef.h>
+#include <sys/time.h>
 
 #define MAX_BUFFER_SIZE 100
 
@@ -53,6 +54,8 @@ char buffer[MAX_BUFFER_SIZE];
 int readBytes;
 int server;
 socklen_t len;
+fd_set select_fds;                /* fd's used by select */
+struct timeval timeout;           /* Time value for time out */
 
 int main(int argc, char* argv[]){
 
@@ -229,80 +232,144 @@ void creatingSockets(){
 }
 
 void UDP_Server_1(char message[], char *buffer) {
-	if (sendto(UDP_listen_socket_1, message, strlen(message), 0, (struct sockaddr *) &UDP_server_address_1, len) == -1){
+	timeout.tv_sec = 8;         /* Timeout set for 5 sec + 0 micro sec*/
+	timeout.tv_usec = 0;
+	if (select(32, &select_fds, NULL, NULL, &timeout) == 0 )
+      {
+         printf("UDP Server 1 has timed out...\nCheck if all the microservice is working\nterminating appilcation");
+		 exit(-1);
+      }
+      else
+      {
+		if (sendto(UDP_listen_socket_1, message, strlen(message), 0, (struct sockaddr *) &UDP_server_address_1, len) == -1){
 			printf("sendto failed\n");
 			exit(-1);
         }
 
-	if ((readBytes=recvfrom(UDP_listen_socket_1, buffer, MAX_BUFFER_SIZE, 0, (struct sockaddr *) &UDP_server_address_1, &len))==-1){
+		if ((readBytes=recvfrom(UDP_listen_socket_1, buffer, MAX_BUFFER_SIZE, 0, (struct sockaddr *) &UDP_server_address_1, &len))==-1){
         	printf("Read error!\n");
             exit(-1);
         }
+	  }
+		
 	//printf("buffer is: %s\n", buffer);
 }
 
 void UDP_Server_2(char message[], char *buffer) {
-	if (sendto(UDP_listen_socket_2, message, strlen(message), 0, (struct sockaddr *) &UDP_server_address_2, len) == -1){
+	timeout.tv_sec = 8;         /* Timeout set for 5 sec + 0 micro sec*/
+	timeout.tv_usec = 0;
+	if (select(32, &select_fds, NULL, NULL, &timeout) == 0 )
+      {
+         printf("UDP Server 2 has timed out...\nCheck if all the microservice is working\nterminating appilcation");
+		 exit(-1);
+      }
+      else
+      {
+		if (sendto(UDP_listen_socket_2, message, strlen(message), 0, (struct sockaddr *) &UDP_server_address_2, len) == -1){
 			printf("sendto failed\n");
 			exit(-1);
         }
 
-	if ((readBytes=recvfrom(UDP_listen_socket_2, buffer, MAX_BUFFER_SIZE, 0, (struct sockaddr *) &UDP_server_address_2, &len))==-1){
+		if ((readBytes=recvfrom(UDP_listen_socket_2, buffer, MAX_BUFFER_SIZE, 0, (struct sockaddr *) &UDP_server_address_2, &len))==-1){
         	printf("Read error!\n");
             exit(-1);
         }
+	  }
 	//printf("buffer is: %s\n", buffer);
 }
 
 void UDP_Server_3(char message[], char *buffer) {
-	if (sendto(UDP_listen_socket_3, message, strlen(message), 0, (struct sockaddr *) &UDP_server_address_3, len) == -1){
+	timeout.tv_sec = 8;         /* Timeout set for 5 sec + 0 micro sec*/
+	timeout.tv_usec = 0;
+	if (select(32, &select_fds, NULL, NULL, &timeout) == 0 )
+      {
+         printf("UDP Server 3 has timed out...\nCheck if all the microservice is working\nterminating appilcation");
+		 exit(-1);
+      }
+      else
+      {
+		if (sendto(UDP_listen_socket_3, message, strlen(message), 0, (struct sockaddr *) &UDP_server_address_3, len) == -1){
 			printf("sendto failed\n");
 			exit(-1);
         }
 
-	if ((readBytes=recvfrom(UDP_listen_socket_3, buffer, MAX_BUFFER_SIZE, 0, (struct sockaddr *) &UDP_server_address_3, &len))==-1){
+		if ((readBytes=recvfrom(UDP_listen_socket_3, buffer, MAX_BUFFER_SIZE, 0, (struct sockaddr *) &UDP_server_address_3, &len))==-1){
         	printf("Read error!\n");
             exit(-1);
         }
+	  }
+		
 	//printf("buffer is: %s\n", buffer);
 }
 
 void UDP_Server_4(char message[], char *buffer) {
-	if (sendto(UDP_listen_socket_4, message, strlen(message), 0, (struct sockaddr *) &UDP_server_address_4, len) == -1){
+	timeout.tv_sec = 8;         /* Timeout set for 5 sec + 0 micro sec*/
+	timeout.tv_usec = 0;
+	if (select(32, &select_fds, NULL, NULL, &timeout) == 0 )
+      {
+         printf("UDP Server 4 has timed out...\nCheck if all the microservice is working\nterminating appilcation");
+		 exit(-1);
+      }
+      else
+      {
+		if (sendto(UDP_listen_socket_4, message, strlen(message), 0, (struct sockaddr *) &UDP_server_address_4, len) == -1){
 			printf("sendto failed\n");
 			exit(-1);
         }
 
-	if ((readBytes=recvfrom(UDP_listen_socket_4, buffer, MAX_BUFFER_SIZE, 0, (struct sockaddr *) &UDP_server_address_4, &len))==-1){
+		if ((readBytes=recvfrom(UDP_listen_socket_4, buffer, MAX_BUFFER_SIZE, 0, (struct sockaddr *) &UDP_server_address_4, &len))==-1){
         	printf("Read error!\n");
             exit(-1);
         }
+	  }
+		
 	//printf("buffer is: %s\n", buffer);
 }
 
 void UDP_Server_5(char message[], char *buffer) {
-	if (sendto(UDP_listen_socket_5, message, strlen(message), 0, (struct sockaddr *) &UDP_server_address_5, len) == -1){
+	timeout.tv_sec = 8;         /* Timeout set for 5 sec + 0 micro sec*/
+	timeout.tv_usec = 0;
+	if (select(32, &select_fds, NULL, NULL, &timeout) == 0 )
+      {
+         printf("UDP Server 5 has timed out...\nCheck if all the microservice is working\nterminating appilcation");
+		 exit(-1);
+      }
+      else
+      {
+		if (sendto(UDP_listen_socket_5, message, strlen(message), 0, (struct sockaddr *) &UDP_server_address_5, len) == -1){
 			printf("sendto failed\n");
 			exit(-1);
         }
 
-	if ((readBytes=recvfrom(UDP_listen_socket_5, buffer, MAX_BUFFER_SIZE, 0, (struct sockaddr *) &UDP_server_address_5, &len))==-1){
+		if ((readBytes=recvfrom(UDP_listen_socket_5, buffer, MAX_BUFFER_SIZE, 0, (struct sockaddr *) &	UDP_server_address_5, &len))==-1){
         	printf("Read error!\n");
             exit(-1);
         }
+	  }
+	
 	//printf("buffer is: %s\n", buffer);
 }
 
 void UDP_Server_6(char message[], char *buffer) {
-	if (sendto(UDP_listen_socket_6, message, strlen(message), 0, (struct sockaddr *) &UDP_server_address_6, len) == -1){
-			printf("sendto failed\n");
-			exit(-1);
-        }
+	timeout.tv_sec = 8;         /* Timeout set for 5 sec + 0 micro sec*/
+	timeout.tv_usec = 0;
+	if (select(32, &select_fds, NULL, NULL, &timeout) == 0 )
+      {
+         printf("UDP Server 6 has timed out...\nCheck if all the microservice is working\nterminating appilcation");
+		 exit(-1);
+      }
+      else
+      {
+		if (sendto(UDP_listen_socket_6, message, strlen(message), 0, (struct sockaddr *) &UDP_server_address_6, len) == -1){
+				printf("sendto failed\n");
+				exit(-1);
+			}
 
-	if ((readBytes=recvfrom(UDP_listen_socket_6, buffer, MAX_BUFFER_SIZE, 0, (struct sockaddr *) &UDP_server_address_6, &len))==-1){
-        	printf("Read error!\n");
-            exit(-1);
-        }
+		if ((readBytes=recvfrom(UDP_listen_socket_6, buffer, MAX_BUFFER_SIZE, 0, (struct sockaddr *) &UDP_server_address_6, &len))==-1){
+				printf("Read error!\n");
+				exit(-1);
+			}
+	  }
 	//printf("buffer is: %s\n", buffer);
 }
 
