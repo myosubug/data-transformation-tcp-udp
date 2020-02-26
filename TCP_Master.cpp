@@ -4,13 +4,16 @@
  * Author: Sungjong Oh
  * Student ID#: 00500426
  */
-
+#include <iostream>
 #include <unistd.h> 
 #include <stdio.h>
 #include <sys/socket.h> 
 #include <stdlib.h> 
 #include <netinet/in.h> 
-#include <string.h>  
+#include <string.h>
+#include <string>
+#include <strings.h>
+#include <stddef.h> 
 
 #define MAX_BUFFER_SIZE 100
 
@@ -24,10 +27,7 @@ void UDP_Server_3(char message[], char *b);
 void UDP_Server_4(char message[], char *b);
 void UDP_Server_5(char message[], char *b);
 void UDP_Server_6(char message[], char *b);
-/*
-void interpretCommand(char *command);
-*/
-
+void interpretCommand(char sentence[], char command[], char *buffer);
 struct sockaddr_in TCP_server_address;
 struct sockaddr_in UDP_server_address_1;
 struct sockaddr_in UDP_server_address_2;
@@ -51,8 +51,8 @@ int UDP_listen_socket_5;
 int UDP_listen_socket_6;
 char buffer[MAX_BUFFER_SIZE];
 int readBytes;
+int server;
 socklen_t len;
-
 
 int main(int argc, char* argv[]){
 
@@ -61,6 +61,7 @@ int main(int argc, char* argv[]){
 	initializingAddress();
 	creatingSockets();
 	len = sizeof(UDP_server_address_1);
+
 
 
 	//binding
@@ -93,38 +94,41 @@ int main(int argc, char* argv[]){
 	//send and receive information
 	printf("Connection successful! Echoing information...\n");
 	int count;
+	string temp;
+	string sent;
+	string comm;
 	char message[MAX_BUFFER_SIZE];
+	char sentence[MAX_BUFFER_SIZE];
+	char command[MAX_BUFFER_SIZE];
 	while (1) {
+		bzero(sentence, MAX_BUFFER_SIZE);
+		bzero(command, MAX_BUFFER_SIZE);
+		
 		count = recv(TCP_connect_socket, message, 100, 0);
 		if (count == -1){
 			printf("recv() call failed\n");
 			exit(-1);
 		} else {
-			if (strstr(message, "quit") != NULL){
-				exit(-1);
-			}
 			printf("received '%s' from client\n", message);
-			printf("sending '%s' to UDP Server 1\n", message);
-			bzero(buffer, MAX_BUFFER_SIZE);
-			
-			
-			UDP_Server_2(message, buffer);
-			UDP_Server_1(buffer, buffer);
-			UDP_Server_5(buffer, buffer);
-			UDP_Server_3(buffer, buffer);
-			//UDP_Server_4(message, buffer);
-			
-			//UDP_Server_6(message, buffer);
-			
-          	//buffer[readBytes] = '\0';    // proper null-termination of string
-		  
-
+			temp = message;
+			int token = temp.find("@");
+			sent = temp.substr(0, token);
+			comm = temp.substr(token+1, strlen(message)-1);
+			strcpy(sentence, sent.c_str());
+			strcpy(command, comm.c_str());
 		}
-		printf("Received message from to UDP Server 1!\n");
+
+		bzero(buffer, MAX_BUFFER_SIZE);
+		interpretCommand(sentence, command, buffer);
+
 		count = send(TCP_connect_socket, buffer, 100, 0);
 		if (count == -1){
 			printf("send() call failed");
 			exit(-1);
+		}
+
+		if (strstr(message, "quit") != NULL){
+			break;
 		}
 
 	}
@@ -173,7 +177,6 @@ void initializingAddress(){
 	UDP_server_address_6.sin_port = htons(UDP_PORT_6); //specificies the port number
 	UDP_server_address_6.sin_addr.s_addr = htonl(INADDR_ANY); //specifies the IP address
 }
-
 
 void creatingSockets(){
 	printf("Creating TCP socket...\n");
@@ -224,7 +227,6 @@ void creatingSockets(){
 	if (setsockopt(TCP_listen_socket, SOL_SOCKET, SO_REUSEADDR, &enable, sizeof(int)) < 0)
     	perror("setsockopt(SO_REUSEADDR) failed");
 }
-
 
 void UDP_Server_1(char message[], char *buffer) {
 	if (sendto(UDP_listen_socket_1, message, strlen(message), 0, (struct sockaddr *) &UDP_server_address_1, len) == -1){
@@ -303,3 +305,52 @@ void UDP_Server_6(char message[], char *buffer) {
         }
 	//printf("buffer is: %s\n", buffer);
 }
+
+void interpretCommand(char sentence[], char command[], char *buffer){
+	switch (command[0]) {
+		case '1':
+			UDP_Server_1(sentence, buffer);
+			break;
+		case '2':
+			UDP_Server_2(sentence, buffer);
+			break;
+		case '3':
+			UDP_Server_3(sentence, buffer);
+			break;
+		case '4':
+			UDP_Server_4(sentence, buffer);
+			break;
+		case '5':
+			UDP_Server_5(sentence, buffer);
+			break;
+		case '6':
+			UDP_Server_6(sentence, buffer);
+			break;
+	}
+		
+	for(int i = 1; i < strlen(command); ++i){
+		switch (command[i]) {
+			case '1':
+				UDP_Server_1(buffer, buffer);
+				break;
+			case '2':
+				UDP_Server_2(buffer, buffer);
+				break;
+			case '3':
+				UDP_Server_3(buffer, buffer);
+				break;
+			case '4':
+				UDP_Server_4(buffer, buffer);
+				break;
+			case '5':
+				UDP_Server_5(buffer, buffer);
+				break;
+			case '6':
+				UDP_Server_6(buffer, buffer);
+				break;
+		}
+	}
+	
+ }
+
+ 

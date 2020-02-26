@@ -4,7 +4,7 @@
  * Author: Sungjong Oh
  * Student ID#: 00500426
  */
-
+#include <iostream>
 #include <unistd.h> 
 #include <stdio.h>
 #include <stdlib.h> 
@@ -49,29 +49,45 @@ int main(int argc, char* argv[]){
 	//send and receive information
 	printf("Connection successful! Enter 'quit' to end program.\n");
 	int count;
-	char send_message[MAX_BUFFER_SIZE] = {""};
+	char send_message[85];
+	char send_command[14];
+	char combine_message[MAX_BUFFER_SIZE];
 	char receive_message[MAX_BUFFER_SIZE];
 	while (1) {
+		bzero(send_message, 85);
+		bzero(send_command, 14);
+		bzero(receive_message, MAX_BUFFER_SIZE);
+		bzero(combine_message, MAX_BUFFER_SIZE);
 
 		printf("Enter message to send: ");
 		gets(send_message);
-		count = send(connect_socket, send_message, MAX_BUFFER_SIZE, 0);
+		printf("Enter a command/commands to operate on the message:\n1:Identity(Echo Back)\n2:Reverse\n3:To upper case\n4:To lower case\n5:Caesar\n6:Camel case\nFor example, you can also try multiple operations such as '2135'\nEnter command: ");
+		gets(send_command);
+		strcpy(combine_message,send_message);
+		combine_message[strlen(combine_message)] = '@';
+    	strcat(combine_message,send_command);
+
+
+		count = send(connect_socket, combine_message, 100, 0);
 		if (count == -1){
 			printf("send() call failed");
 			exit(-1);
 		}
-		count = recv(connect_socket, receive_message, MAX_BUFFER_SIZE, 0);
+		count = recv(connect_socket, receive_message, 100, 0);
 		if (count == -1){
 			printf("recv() call failed\n");
 			exit(-1);
 		} else {
-			printf("Received a message from master server!!\n");
-			printf("=======================================\n");
-			printf("%s\n", receive_message);
+			cout << endl << endl;
+			cout << "===============================" << endl;
+			printf("sent '%s' to server\n", send_message);
+			printf("received '%s' from server\n", receive_message);
+			cout << "===============================" << endl << endl;
 		}
 		if (strstr("quit", receive_message) != NULL || strstr(send_message, "quit") != NULL){
 			break;
 		}
+		
 	}
 
 	//close sockets
