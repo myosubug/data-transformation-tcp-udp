@@ -1,9 +1,4 @@
-/* 
- * TCP_Master.cpp
- * CPSC441 Assignment 2
- * Author: Sungjong Oh
- * Student ID#: 00500426
- */
+
 #include <iostream>
 #include <unistd.h> 
 #include <stdio.h>
@@ -22,6 +17,7 @@
 
 using namespace std;
 
+//declaring methods
 void initializingAddress();
 void creatingSockets();
 void UDP_Server_1(char message[], char *b);
@@ -31,6 +27,8 @@ void UDP_Server_4(char message[], char *b);
 void UDP_Server_5(char message[], char *b);
 void UDP_Server_6(char message[], char *b);
 void interpretCommand(char sentence[], char command[], char *buffer);
+
+//prestting global variables
 struct sockaddr_in TCP_server_address;
 struct sockaddr_in UDP_server_address_1;
 struct sockaddr_in UDP_server_address_2;
@@ -60,13 +58,12 @@ socklen_t len;
 
 int main(int argc, char* argv[]){
 
+
     char buffer[MAX_BUFFER_SIZE];
     int readBytes;
 	initializingAddress();
 	creatingSockets();
 	len = sizeof(UDP_server_address_1);
-
-
 
 	//binding
 	printf("Binding...\n");
@@ -76,7 +73,6 @@ int main(int argc, char* argv[]){
 		printf("bind() call failed\n");
 		exit(-1);
 	}
-
 
 	//listening
 	status = listen(TCP_listen_socket, 5);
@@ -105,15 +101,20 @@ int main(int argc, char* argv[]){
 	char sentence[MAX_BUFFER_SIZE];
 	char command[MAX_BUFFER_SIZE];
 	while (1) {
+
+		//cleaning up variables
 		bzero(sentence, MAX_BUFFER_SIZE);
 		bzero(command, MAX_BUFFER_SIZE);
 		
+		//receving requests form TCP client
 		count = recv(TCP_connect_socket, message, 1000, 0);
 		if (count == -1){
 			printf("recv() call failed\n");
 			exit(-1);
 		} else {
 			printf("received '%s' from client\n", message);
+
+			//parsing TCP client requests into message and commands
 			temp = message;
 			int token = temp.find("@");
 			sent = temp.substr(0, token);
@@ -123,8 +124,11 @@ int main(int argc, char* argv[]){
 		}
 
 		bzero(buffer, MAX_BUFFER_SIZE);
+
+		//interpreting commands with the requested message
 		interpretCommand(sentence, command, buffer);
 
+		//sending processed message back to TCP client
 		count = send(TCP_connect_socket, buffer, 1000, 0);
 		if (count == -1){
 			printf("send() call failed");
@@ -144,6 +148,7 @@ int main(int argc, char* argv[]){
 	return 0;
 }
 
+//factoring all initilization of addresses
 void initializingAddress(){
 	printf("Initializing address...\n");
 	memset(&TCP_server_address, 0, sizeof(TCP_server_address));
@@ -182,6 +187,7 @@ void initializingAddress(){
 	UDP_server_address_6.sin_addr.s_addr = htonl(INADDR_ANY); //specifies the IP address
 }
 
+//factoring all socket creations
 void creatingSockets(){
 	printf("Creating TCP socket...\n");
 	TCP_listen_socket = socket(AF_INET, SOCK_STREAM, 0);
@@ -232,6 +238,7 @@ void creatingSockets(){
     	perror("setsockopt(SO_REUSEADDR) failed");
 }
 
+//factoring UDP server call
 void UDP_Server_1(char message[], char *buffer) {
 	fd_set select_fds;                /* fd's used by select */
 	struct timeval timeout;           /* Time value for time out */
@@ -394,6 +401,7 @@ void UDP_Server_6(char message[], char *buffer) {
 	}
 }
 
+//interpreting requested command one by one by interation and switch statements
 void interpretCommand(char sentence[], char command[], char *buffer){
 
 	switch (command[0]) {

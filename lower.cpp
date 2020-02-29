@@ -1,45 +1,29 @@
-/* 
- * UDP_Server_2.cpp
- * CPSC441 Assignment 2
- * Author: Sungjong Oh
- * Student ID#: 00500426
- */
-
 #include <unistd.h> 
 #include <stdio.h>
 #include <sys/socket.h> 
 #include <stdlib.h> 
 #include <netinet/in.h> 
-#include <string.h>  
+#include <string.h>
+#include <ctype.h>
 
 #define MAX_BUFFER_SIZE  1000
 #define MASTER_PORT 5000
 
 using namespace std;
 
-
-char* reverse (char* s) {
-  char  c;
-  char* s0 = s - 1;
-  char* s1 = s;
-
-  /* Find the end of the string */
-  while (*s1) ++s1;
-
-  /* Reverse it */
-  while (s1-- > ++s0)
+//method for lowering alphabets
+void lower (char *s) {
+  	int i = 0;
+    while(s[i] != '\0')
     {
-    c   = *s0;
-    *s0 = *s1;
-    *s1 =  c;
+        s[i++] = tolower((unsigned char)s[i]);
     }
-
-  return s;
 }
+
 
 int main(int argc, char* argv[]){
 
-	int UDP_PORT_2 = 6002;
+	int UDP_PORT_4 = 6004;
     char messagein[MAX_BUFFER_SIZE];
     char messageout[MAX_BUFFER_SIZE];
     int readBytes;
@@ -50,7 +34,7 @@ int main(int argc, char* argv[]){
 	struct sockaddr_in UDP_server_address_1;
 	memset(&UDP_server_address_1, 0, sizeof(UDP_server_address_1));
 	UDP_server_address_1.sin_family = AF_INET; //specifies the address family
-	UDP_server_address_1.sin_port = htons(UDP_PORT_2); //specificies the port number
+	UDP_server_address_1.sin_port = htons(UDP_PORT_4); //specificies the port number
 	UDP_server_address_1.sin_addr.s_addr = htonl(INADDR_ANY); //specifies the IP address
 
     struct sockaddr_in client_address;
@@ -63,9 +47,9 @@ int main(int argc, char* argv[]){
 	//socket creation for TCP server - client and UDPs
 
 	printf("Creating UDP sockets...\n");
-	int UDP_SOCKET_2;
-	UDP_SOCKET_2 = socket(AF_INET, SOCK_DGRAM, 0);
-	if (UDP_SOCKET_2 == -1){
+	int UDP_SOCKET_4;
+	UDP_SOCKET_4 = socket(AF_INET, SOCK_DGRAM, 0);
+	if (UDP_SOCKET_4 == -1){
 		printf("UDP 1 socket() call failed");
 		exit(-1);
 	}
@@ -73,7 +57,7 @@ int main(int argc, char* argv[]){
 	//binding
 	printf("Binding...\n");
 	int status;
-	status = bind(UDP_SOCKET_2, (struct sockaddr *)&UDP_server_address_1, sizeof(struct sockaddr_in));
+	status = bind(UDP_SOCKET_4, (struct sockaddr *)&UDP_server_address_1, sizeof(struct sockaddr_in));
 	if (status == -1){
 		printf("bind() call failed\n");
 		exit(-1);
@@ -87,24 +71,24 @@ int main(int argc, char* argv[]){
         bzero(messagein, MAX_BUFFER_SIZE);
 	    bzero(messageout, MAX_BUFFER_SIZE);
 
-        if ((readBytes=recvfrom(UDP_SOCKET_2, messagein, MAX_BUFFER_SIZE, 0, (struct sockaddr *)&client_address, &len)) < 0)
+        if ((readBytes=recvfrom(UDP_SOCKET_4, messagein, MAX_BUFFER_SIZE, 0, (struct sockaddr *)&client_address, &len)) < 0)
 	    {
 	        printf("Read error!\n");
 	        return -1;
 	    }
-		printf("Server received '%s'\n", messagein);
-		reverse(messagein);
         
+        printf("Server received '%s'\n", messagein);
         printf("Server received %d bytes\n", readBytes);
+		lower(messagein);
         printf("Server sending '%s' back\n", messagein);
 
-        sendto(UDP_SOCKET_2, messagein, strlen(messagein), 0, (struct sockaddr *)&client_address, len);	
+        sendto(UDP_SOCKET_4, messagein, strlen(messagein), 0, (struct sockaddr *)&client_address, len);	
         
     } 
 
 
 	//close sockets
 	printf("Closing socket...\n");
-	close(UDP_SOCKET_2);
+	close(UDP_SOCKET_4);
 	return 0;
 }

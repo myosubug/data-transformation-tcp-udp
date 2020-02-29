@@ -1,9 +1,3 @@
-/* 
- * UDP_Server_3.cpp
- * CPSC441 Assignment 2
- * Author: Sungjong Oh
- * Student ID#: 00500426
- */
 
 #include <unistd.h> 
 #include <stdio.h>
@@ -18,18 +12,26 @@
 
 using namespace std;
 
-void upper (char *s) {
-  	int i = 0;
-    while(s[i] != '\0')
-    {
-        s[i++] = toupper((unsigned char)s[i]);
-    }
+//making camel case of a passed string
+void camel (char *str)
+{
+	str[0] = toupper(str[0]);
+   	for (int i = 1; i < strlen(str); i++)
+   	{
+    	if ( str[i - 1] == ' ' )
+            str[i] = toupper(str[i] );
+        else
+            str[i] = tolower(str[i]);
+   }
 }
+
+
+
 
 
 int main(int argc, char* argv[]){
 
-	int UDP_PORT_3 = 6003;
+	int UDP_PORT_6 = 6006;
     char messagein[MAX_BUFFER_SIZE];
     char messageout[MAX_BUFFER_SIZE];
     int readBytes;
@@ -40,7 +42,7 @@ int main(int argc, char* argv[]){
 	struct sockaddr_in UDP_server_address_1;
 	memset(&UDP_server_address_1, 0, sizeof(UDP_server_address_1));
 	UDP_server_address_1.sin_family = AF_INET; //specifies the address family
-	UDP_server_address_1.sin_port = htons(UDP_PORT_3); //specificies the port number
+	UDP_server_address_1.sin_port = htons(UDP_PORT_6); //specificies the port number
 	UDP_server_address_1.sin_addr.s_addr = htonl(INADDR_ANY); //specifies the IP address
 
     struct sockaddr_in client_address;
@@ -53,9 +55,9 @@ int main(int argc, char* argv[]){
 	//socket creation for TCP server - client and UDPs
 
 	printf("Creating UDP sockets...\n");
-	int UDP_SOCKET_3;
-	UDP_SOCKET_3 = socket(AF_INET, SOCK_DGRAM, 0);
-	if (UDP_SOCKET_3 == -1){
+	int UDP_SOCKET_6;
+	UDP_SOCKET_6 = socket(AF_INET, SOCK_DGRAM, 0);
+	if (UDP_SOCKET_6 == -1){
 		printf("UDP 1 socket() call failed");
 		exit(-1);
 	}
@@ -63,7 +65,7 @@ int main(int argc, char* argv[]){
 	//binding
 	printf("Binding...\n");
 	int status;
-	status = bind(UDP_SOCKET_3, (struct sockaddr *)&UDP_server_address_1, sizeof(struct sockaddr_in));
+	status = bind(UDP_SOCKET_6, (struct sockaddr *)&UDP_server_address_1, sizeof(struct sockaddr_in));
 	if (status == -1){
 		printf("bind() call failed\n");
 		exit(-1);
@@ -77,7 +79,7 @@ int main(int argc, char* argv[]){
         bzero(messagein, MAX_BUFFER_SIZE);
 	    bzero(messageout, MAX_BUFFER_SIZE);
 
-        if ((readBytes=recvfrom(UDP_SOCKET_3, messagein, MAX_BUFFER_SIZE, 0, (struct sockaddr *)&client_address, &len)) < 0)
+        if ((readBytes=recvfrom(UDP_SOCKET_6, messagein, MAX_BUFFER_SIZE, 0, (struct sockaddr *)&client_address, &len)) < 0)
 	    {
 	        printf("Read error!\n");
 	        return -1;
@@ -85,16 +87,16 @@ int main(int argc, char* argv[]){
         
         printf("Server received '%s'\n", messagein);
         printf("Server received %d bytes\n", readBytes);
-		upper(messagein);
+		camel(messagein);
         printf("Server sending '%s' back\n", messagein);
 
-        sendto(UDP_SOCKET_3, messagein, strlen(messagein), 0, (struct sockaddr *)&client_address, len);	
+        sendto(UDP_SOCKET_6, messagein, strlen(messagein), 0, (struct sockaddr *)&client_address, len);	
         
     } 
 
 
 	//close sockets
 	printf("Closing socket...\n");
-	close(UDP_SOCKET_3);
+	close(UDP_SOCKET_6);
 	return 0;
 }

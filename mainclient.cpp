@@ -1,9 +1,4 @@
-/* 
- * TCP_Client.cpp
- * CPSC441 Assignment 2
- * Author: Sungjong Oh
- * Student ID#: 00500426
- */
+
 #include <iostream>
 #include <unistd.h> 
 #include <stdio.h>
@@ -55,13 +50,18 @@ int main(int argc, char* argv[]){
 	char combine_message[MAX_BUFFER_SIZE];
 	char receive_message[MAX_BUFFER_SIZE];
 	while (1) {
+
+		//clearing variables for char arrays
 		bzero(send_message, 950);
 		bzero(send_command, 49);
 		bzero(receive_message, MAX_BUFFER_SIZE);
 		bzero(combine_message, MAX_BUFFER_SIZE);
 
+		//taking user input
 		printf("Enter message to send: ");
 		gets(send_message);
+
+		//if input is empty, put it a loop to get a valid input
 		while (strlen(send_message) == 0){
 			cout << "Can't process empty string" << endl;
 			printf("Enter message to send: ");
@@ -69,6 +69,8 @@ int main(int argc, char* argv[]){
 		}
 		printf("Enter a command/commands to operate on the message\n1:Identity(Echo Back)\n2:Reverse\n3:To upper case\n4:To lower case\n5:Caesar\n6:Camel case\nFor example, you can also try multiple operations such as '2135'\nEnter command: ");
 		gets(send_command);
+
+		//if command is empty, put the question in a loop to get valid iput command
 		while (strlen(send_command) == 0){
 			cout << "Can't process empty command" << endl;
 			printf("Enter command/commands to send: ");
