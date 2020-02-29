@@ -4,24 +4,27 @@ This is a network-based application that offers several different data transform
 ## How to run this program:
 * Unzip the zip file and go to the location in terminal window.
 * Then run following commands to compile all 8 *.cpp files.
-◼ g++ mainserver.cpp -o mainserver
-◼ g++ mainclient.cpp -o mainclient
-◼ g++ identity.cpp -o identity
-◼ g++ reverse.cpp -o reverse
-◼ g++ lower.cpp -o lower
-◼ g++ upper.cpp -o upper
-◼ g++ caesar.cpp -o caesar
-◼ g++ yours.cpp -o yours
-
+```
+g++ mainserver.cpp -o mainserver
+g++ mainclient.cpp -o mainclient
+g++ identity.cpp -o identity
+g++ reverse.cpp -o reverse
+g++ lower.cpp -o lower
+g++ upper.cpp -o upper
+g++ caesar.cpp -o caesar
+g++ yours.cpp -o yours
+```
 * Then run following commands to run all 8 runnable files.
-◼ ./mainserver
-◼ ./mainclient
-◼ ./identity
-◼ ./reverse
-◼ ./lower
-◼ ./upper
-◼ ./caesar
-◼ ./yours
+```
+./mainserver
+./mainclient
+./identity
+./reverse
+./lower
+./upper
+./caesar
+./yours
+```
 
 * make sure you run “mainserver” before “mainclient”
 * it’s easier to run all 8 client&servers in 8 different terminal windows
