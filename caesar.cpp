@@ -1,9 +1,3 @@
-/* 
- * caesar.cpp
- * CPSC441 Assignment 2
- * Author: Sungjong Oh
- * Student ID#: 00500426
- */
 
 #include <unistd.h> 
 #include <stdio.h>
